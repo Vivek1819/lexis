@@ -11,6 +11,7 @@ const t = initTRPC.create();
  * Export reusable router and procedure helpers
  * that can be used throughout the router
  */
+
 const middleware=t.middleware
 const isAuth = middleware(async(opts)=>{
     const {getUser} = getKindeServerSession()
@@ -29,3 +30,4 @@ const isAuth = middleware(async(opts)=>{
 })
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const privateProcedure = t.procedure.use(isAuth);
