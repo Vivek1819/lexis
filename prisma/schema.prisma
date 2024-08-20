@@ -17,7 +17,8 @@ model User {
   id    String @id @unique
   email String @unique
 
-  File File[]
+  File    File[]
+  Message Message[]
 
   stripeCustomerID       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -33,8 +34,9 @@ enum UploadStatus {
 }
 
 model File {
-  id   String @id @default(cuid())  //Collision-resistant Unique Identifier
-  name String
+  id       String    @id @default(cuid()) //Collision-resistant Unique Identifier
+  name     String
+  messages Message[]
 
   uploadStatus UploadStatus @default(PENDING)
 
@@ -45,4 +47,18 @@ model File {
   updatedAt DateTime @updatedAt
   User      User?    @relation(fields: [userId], references: [id])
   userId    String?
+}
+
+model Message {
+  id   String @id @default(cuid())
+  text String @db.Text()
+
+  isUserMessage Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+  File   File?   @relation(fields: [fileId], references: [id])
+  fileId String?
 }
